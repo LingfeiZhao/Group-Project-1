@@ -51,20 +51,11 @@ for n in N:
 	Average_r2.append(Walk.average_data['r2'])
 
 #plot figures
-pylab.plot(N,Average_x,'co')
+pylab.plot(N,Average_x,'co',label='<$x_n$>')
+pylab.plot(N,Average_x2,'ro',label='<$x^2_n$>')
+pylab.plot(N,Average_r2,'ko',label='<$r^2_n$>')
+pylab.legend()
 pylab.xlabel('n')
-pylab.ylabel('<$x_n$>')
-pylab.savefig('average_x.pdf')
-pylab.show()
-
-pylab.plot(N,Average_x2,'co')
-pylab.xlabel('n')
-pylab.ylabel('<$x^2_n$>')
-pylab.savefig('average_x_sqaure.pdf')
-pylab.show()
-
-pylab.plot(N,Average_r2,'co')
-pylab.xlabel('n')
-pylab.ylabel('<$r^2_n$>')
-pylab.savefig('average_r_sqaure.pdf')
+pylab.ylabel('Average Data over $10^4$ Samples')
+pylab.savefig('average.pdf')
 pylab.show()
