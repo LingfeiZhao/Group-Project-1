@@ -8,28 +8,30 @@ class Diffusion_1D(object):
 		self.dx=dx
 		self.dt=dt
 		self.t=0
-		self.x=[-(self.N-1)/2*self.dx+i*dx for i in range(N)]
-		self.rho=[pylab.exp(-1000*self.x[i]*self.x[i]) for i in range(N)]
-		self.rho_new=[0.0]*N
+		self.x=[-(self.N-1)/2*self.dx+i*dx for i in range(N)] #initialize the grid position
+		self.rho=[pylab.exp(-1000*self.x[i]*self.x[i]) for i in range(N)] #initialize the distribution at t=0 
+		self.rho_new=[0.0]*N #the distribution at t+dt
 
-	def diffuse(self): #calculate the distribution at t+dt after diffusion
+	def diffuse(self): #calculate the distribution at t+dt
 		for i in range(self.N-2):
+			#the diffusion equation
 			self.rho_new[i+1]=self.rho[i+1] + self.D*self.dt/self.dx/self.dx* (self.rho[i+2]+self.rho[i]-2*self.rho[i+1])
-		self.rho=self.rho_new[:]
-		self.t+=self.dt
+		self.rho=self.rho_new[:] #update distribution
+		self.t+=self.dt #update time t
 
 
-def Normal_Distribution(x,sigma):
+def Normal_Distribution(x,sigma):#the normal distribution function
 	return 1/pylab.sqrt(2*pylab.pi)/sigma*pylab.exp(-x*x/2/sigma/sigma)
 
+#initialize the lists to store the fitting parameter
 tfit=[] 
 sigmafit=[] #fitted parameter sigma at time tfit
 
-for i in [100,1000,5000,10000,15000]:
+for i in [100,1000,5000,10000,15000]: #i is the steps of the diffusion which is proportional to time
 	Dif=Diffusion_1D(2)
 	for j in range(i):
 		Dif.diffuse()
-	popt,pcov=curve_fit(Normal_Distribution,Dif.x,Dif.rho)
+	popt,pcov=curve_fit(Normal_Distribution,Dif.x,Dif.rho) # fit out the parameter sigma
 	tfit.append(Dif.t)
 	sigmafit.append(popt)
 
