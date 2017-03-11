@@ -59,7 +59,6 @@ class Mixing(object):
 			self.grid[index[0]][index[1]]=self.grid[i][j]
 			self.grid[i][j]=0 
 			# update the operate list
-			self.operate.remove(index)
 			if i==index[0]+1:
 				for a in [i-2,i-1,i,i+1]:
 					for b in [j-1,j,j+1]:
