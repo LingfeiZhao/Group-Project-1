@@ -40,7 +40,7 @@ class Mixing(object):
 					self.operate.append((a,b))
 
 
-	def update(self):
+	def diffuse(self):
 		index=self.operate[random.randint(0,len(self.operate)-1)]
 		i=index[0]
 		j=index[1]
@@ -67,21 +67,24 @@ class Mixing(object):
 				for a in [i-1,i,i+1,i+2]:
 					for b in [j-1,j,j+1]:
 						self.update_operate((a,b))	
-			elif j==index[0]+1:
+			elif j==index[1]+1:
 				for a in [i-1,i,i+1]:
 					for b in [j-2,j-1,j,j+1]:
 						self.update_operate((a,b))	
-			elif j==index[0]-1:
+			elif j==index[1]-1:
 				for a in [i-1,i,i+1]:
 					for b in [j-1,j,j+1,j+2]:
 						self.update_operate((a,b))			
 
 gas=Mixing()
-for i in range(pow(10,7)):
-	gas.update()
+N=pow(10,7) #iteration number
+for i in range(N):
+	gas.diffuse()
 
 pylab.imshow(gas.grid, cmap='RdBu')
 pylab.xlabel('y')
 pylab.ylabel('x')
+pylab.title('%d iterations'%N)
+
 pylab.savefig('gas.pdf')
 pylab.close()
