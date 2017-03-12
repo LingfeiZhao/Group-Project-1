@@ -76,15 +76,19 @@ class Mixing(object):
 					for b in [j-1,j,j+1,j+2]:
 						self.update_operate((a,b))			
 
-gas=Mixing()
-N=pow(10,7) #iteration number
-for i in range(N):
-	gas.diffuse()
+for i in range(6): #6 subplots
+	gas=Mixing()
+	N=pow(10,i+2) #iteration number
+	for j in range(N):
+		gas.diffuse()
+	#plot figures
+	pylab.subplot(2,3,i+1)
+	pylab.imshow(gas.grid, cmap='RdBu')
+	pylab.axis('tight')
+	pylab.xlabel('y')
+	pylab.ylabel('x')
+	pylab.title('%d iterations'%N)
 
-pylab.imshow(gas.grid, cmap='RdBu')
-pylab.xlabel('y')
-pylab.ylabel('x')
-pylab.title('%d iterations'%N)
-
+pylab.tight_layout()
 pylab.savefig('gas.pdf')
 pylab.close()
