@@ -20,15 +20,15 @@ class Mixing(object):
 
 	def can_operate( self, (i,j) ):# we only operate on the unoccupied position, also they should have occupied neighbors
 		can=False
-		if i!=0:
-			can=can or self.grid[i-1][j]
-		if i!=self.Nx-1:
-			can=can or self.grid[i+1][j]
-		if j!=0:
-			can=can or self.grid[i][j-1]
-		if j!=self.Ny-1:
-			can=can or self.grid[i][j+1]
-		can= can and self.grid[i][j]==0
+		if not self.grid[i][j]:
+			if i!=0:
+				can=can or self.grid[i-1][j]
+			if i!=self.Nx-1:
+				can=can or self.grid[i+1][j]
+			if j!=0:
+				can=can or self.grid[i][j-1]
+			if j!=self.Ny-1:
+				can=can or self.grid[i][j+1]
 		return can
 
 	def update_operate(self, (a,b) ):
@@ -76,13 +76,13 @@ class Mixing(object):
 					for b in [j-1,j,j+1,j+2]:
 						self.update_operate((a,b))			
 
-for i in range(6): #6 subplots
+for i in range(1): #number of subplots
 	gas=Mixing()
-	N=pow(10,i+2) #iteration number
+	N=pow(10,i+5) #iteration number
 	for j in range(N):
 		gas.diffuse()
 	#plot figures
-	pylab.subplot(2,3,i+1)
+	pylab.subplot(1,1,i+1)
 	pylab.imshow(gas.grid, cmap='RdBu')
 	pylab.axis('tight')
 	pylab.xlabel('y')
