@@ -1,94 +1,93 @@
 import random
 import pylab
+from time import clock
 
 class Mixing(object):
 	def __init__(self,Nx=120,Ny=80):
 		self.Nx=Nx
 		self.Ny=Ny
-		self.operate=[] # the list of the positions that we want to operate on
+		self.unoccupied=[] # we want to operate on the unoccupied locations
 		#initialize the grid
-		self.grid=[[0]*Ny for i in range(Nx)] # 0 represent unoccupied
+		self.grid=[[0]*(Ny+2) for i in range(Nx+2)] # 0 represent unoccupied and boundary, set boundary as 0
 		for i in range(Nx/3):
 			for j in range(Ny):
-				self.grid[i][j]=1 # 1 represent gas A
-				self.grid[-(i+1)][j]=-1 # -1 represent gas B
-		# Initialize the opsitions that can be operated
+				self.grid[i+1][j+1]=1 # 1 represent gas A
+				self.grid[-(i+2)][j+1]=-1 # -1 represent gas B
+		# Initialize the opsitions that are unoccupied
 		for i in range(Nx):
 			for j in range(Ny):
-				if self.can_operate((i,j)):
-					self.operate.append((i,j))
-
-	def can_operate( self, (i,j) ):# we only operate on the unoccupied position, also they should have occupied neighbors
-		can=False
-		if not self.grid[i][j]:
-			if i!=0:
-				can=can or self.grid[i-1][j]
-			if i!=self.Nx-1:
-				can=can or self.grid[i+1][j]
-			if j!=0:
-				can=can or self.grid[i][j-1]
-			if j!=self.Ny-1:
-				can=can or self.grid[i][j+1]
-		return can
-
-	def update_operate(self, (a,b) ):
-		if 0<=a<self.Nx and 0<=b<self.Ny:
-			if (a,b) in self.operate:
-				if not self.can_operate((a,b)):
-					self.operate.remove((a,b))
-			elif self.can_operate((a,b)):
-					self.operate.append((a,b))
-
+				if self.grid[i+1][j+1]==0:
+					self.unoccupied.append((i+1,j+1))
+		self.len_unoccupied=len(self.unoccupied)
 
 	def diffuse(self):
-		index=self.operate[random.randint(0,len(self.operate)-1)]
+		# pick a random unoccupied location 
+		rand_int=random.randint(0,self.len_unoccupied-1)
+		index=self.unoccupied[rand_int]
 		i=index[0]
 		j=index[1]
 		# look at a random neighbor
-		if random.randint(0,1):
-			i+=2*random.randint(0,1)-1
+		direction=random.randint(0,3)
+		if direction==0:
+			i+=1
+		elif direction==1:
+			i-=1
+		elif direction==2:
+			j+=1
 		else:
-			j+=2*random.randint(0,1)-1
-
+			j-=1
 		# if this neighbor has gas, grap it
-		if i==-1 or i==self.Nx or j==-1 or j==self.Ny:
-			pass
-		elif self.grid[i][j]==0:
+		if self.grid[i][j]==0: #notice that the boundaty position is 0
 			pass
 		else:
+			# exchange the two positions
 			self.grid[index[0]][index[1]]=self.grid[i][j]
 			self.grid[i][j]=0 
-			# update the operate list
-			if i==index[0]+1:
-				for a in [i-2,i-1,i,i+1]:
-					for b in [j-1,j,j+1]:
-						self.update_operate((a,b))
-			elif i==index[0]-1:
-				for a in [i-1,i,i+1,i+2]:
-					for b in [j-1,j,j+1]:
-						self.update_operate((a,b))	
-			elif j==index[1]+1:
-				for a in [i-1,i,i+1]:
-					for b in [j-2,j-1,j,j+1]:
-						self.update_operate((a,b))	
-			elif j==index[1]-1:
-				for a in [i-1,i,i+1]:
-					for b in [j-1,j,j+1,j+2]:
-						self.update_operate((a,b))			
+			# update the unoccupied list
+			self.unoccupied[rand_int]=(i,j)
 
-for i in range(1): #number of subplots
+# problem b)
+Nx=120
+
+for i in range(6): # number of subplots
+	nA=[0]*Nx
+	nB=[0]*Nx
+
+	start_time=clock()
 	gas=Mixing()
-	N=pow(10,i+5) #iteration number
-	for j in range(N):
+	power=i+3 # number of iterations is 10^power
+	for j in range(pow(10,power)):
 		gas.diffuse()
-	#plot figures
-	pylab.subplot(1,1,i+1)
+	end_time=clock()
+
+	# calculate nA(x) and nB(x)
+	for j in range(Nx):
+		for pos in gas.grid[j]:
+			if pos==1:
+				nA[j]+=1
+			elif pos==-1:
+				nB[j]+=1
+
+	# plot figures
+	pylab.figure(1)
+	pylab.subplot(2,3,i+1)
 	pylab.imshow(gas.grid, cmap='RdBu')
 	pylab.axis('tight')
-	pylab.xlabel('y')
-	pylab.ylabel('x')
-	pylab.title('%d iterations'%N)
+	pylab.title('10$^%d$steps, %.1f sec'%(power,end_time-start_time) )
+	pylab.tight_layout()
+	pylab.savefig('GP1_3b_1.pdf')
 
-pylab.tight_layout()
-pylab.savefig('gas.pdf')
-pylab.close()
+	pylab.figure(2)
+	pylab.subplot(2,3,i+1)
+	pylab.plot(nA,'co',label='nA(x)')
+	pylab.plot(nB,'ro',label='nB(x)')
+	pylab.legend(loc=0,numpoints=1,prop={'size':12},ncol=2,borderaxespad=0,mode='expand')
+	pylab.xlabel('x')
+	pylab.ylabel('n')
+	pylab.axis('tight')
+	pylab.ylim([-1,100])
+	pylab.title('10$^%d$steps, %.1f sec'%(power,end_time-start_time) )
+	pylab.tight_layout()
+	pylab.savefig('GP1_3b_2.pdf')
+
+pylab.show()
