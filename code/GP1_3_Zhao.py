@@ -48,7 +48,7 @@ class Mixing(object):
 			# update the unoccupied list
 			self.unoccupied[position]=(i,j)
 
-# problem b)
+# problem b)-----------------------------------------------------------
 Nx=120
 
 for i in range(6): # number of subplots
@@ -64,7 +64,7 @@ for i in range(6): # number of subplots
 
 	# calculate nA(x) and nB(x)
 	for j in range(Nx):
-		for pos in gas.grid[j]:
+		for pos in gas.grid[j+1]:
 			if pos==1:
 				nA[j]+=1
 			elif pos==-1:
@@ -94,13 +94,13 @@ for i in range(6): # number of subplots
 
 pylab.show()
 
-# problem c)
+# problem c)-----------------------------------------------------------
 Nx=120
 nA_sum=[[0]*Nx for i in range(6)]
 nB_sum=[[0]*Nx for i in range(6)]
 N_repeats=100
 
-for k in range(N_repeats):
+for k in range(N_repeats): # repeat the calculation for N_repeats times
 	for i in range(6): # number of subplots
 		nA=[0]*Nx
 		nB=[0]*Nx
@@ -112,20 +112,22 @@ for k in range(N_repeats):
 
 		# calculate nA(x) and nB(x)
 		for j in range(Nx):
-			for pos in gas.grid[j]:
+			for pos in gas.grid[j+1]:
 				if pos == 1:
 					nA[j] += 1
 				elif pos == -1:
 					nB[j] += 1
 
+		# sum the result of all repeats
 		for j in range(Nx):
 			nA_sum[i][j] += nA[j]
 			nB_sum[i][j] += nB[j]
 
-
+# get the average result from the sum results
 nA=[[y/float(N_repeats) for y in x] for x in nA_sum]
 nB=[[y/float(N_repeats) for y in x] for x in nB_sum]
 
+# plot the average nA and nB
 for i in range(6):
 	pylab.subplot(2,3,i+1)
 	pylab.plot(nA[i],'co',label='nA(x)')
