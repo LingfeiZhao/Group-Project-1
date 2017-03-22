@@ -16,11 +16,11 @@
 1. \textbf{2D Random Walk}\par
 \smallskip
 We simulate a random walker in 2 dimensions, taking steps of unit length in $\pm x$ or $\pm y$ on a discrete square lattice.\par
-Let $\langle x_{n} \rangle$ be the average $x$ displacement, $\langle (x_{n})^{2} \rangle$ be the average $x$ displacement squared, $\langle r^{2} \rangle$ be the average total displacement squared, and $n$ be the number of steps taken. We plot $\langle x_{n} \rangle$, $\langle (x_{n})^{2} \rangle$, and $\langle r^{2} \rangle$ versus $n$ for up to $n = 100$ by averaging over at least $10^{4}$ different walks for each $n > 3$:\par
+Let $n$ be the number of steps taken, $\langle x_{n} \rangle$ be the average $x$ displacement, $\langle (x_{n})^{2} \rangle$ be the average $x$ displacement squared, and $\langle r^{2} \rangle$ be the average total displacement squared. We plot $\langle x_{n} \rangle$, $\langle (x_{n})^{2} \rangle$, and $\langle r^{2} \rangle$ versus $n$ for up to $n = 100$ by averaging over at least $10^{4}$ different walks for each $n > 3$:\par
 \begin{figure}[H]
 \centering
 \includegraphics[width=10cm]{P1_Yuan.pdf}
-\caption{Average of the $x$ displacement, $x^{2}$ displacement, and $r^{2}$ (total) displacement versus time.}
+\caption{Average of the $x$ displacement, $x^{2}$ displacement, and $r^{2}$ (total) displacement versus number of steps.}
 \end{figure}
 $\langle x_{n} \rangle$ is zero for all values of $n$, as expected: since the steps are random, we expect an equal number of steps in $+x$ as $-x$, averaging out to a net zero displacement from the origin. $\langle(x_{n})^{2} \rangle$ seems to follow a linear relationship with $n$ with a slope of $\frac{1}{2}$, i.e. $\langle(x_{n})^{2} \rangle \approx \frac{1}{2}n$. $\langle r^{2} \rangle$ seems to follow a linear relationship with $n$ as well, such that $\langle r^{2} \rangle \approx n$. Since $\langle r^{2} \rangle = 2Dn$, $D$ being the diffusion constant, we estimate $D \approx \frac{1}{2}$. This is expected as well, since the value of $\langle r^{2} \rangle$ can be calculated analytically to go to $n$, which would give an expected value of $D = \frac{1}{2}$.\par
 \bigskip
@@ -48,7 +48,7 @@ Let $y = x/\sqrt{2}\sigma(t)$. Then Equation \ref{eq:2} is just a Gaussian integ
 \begin{equation}
 = \sigma(t)^{2}
 \end{equation}
-Now we want to solve the 1D diffusion equation using the finite difference form with a diffusion constant D = 2. We choose an initial density profile that is sharply peaked around $x = 0$, but plot multiple profiles at varying times $t$. We fit each density profile with the graph of a normal distribution with $\sigma(t) = \sqrt{2Dt}$ to verify that the profiles correspond with the distribution.\par
+Now we want to solve the 1D diffusion equation using the finite difference form with a diffusion constant D = 2. We choose an initial density profile that is sharply peaked around $x = 0$, but plot multiple profiles at varying times $t$. We fit each density profile with the graph of a normal distribution to verify that the profiles correspond with the distribution. We note that at later times, the fit corresponds to a normal distribution with $\sigma(t) = \sqrt{2Dt}$.\par
 \begin{figure}[H]
 \centering
 \captionsetup{justification=centering, margin=3.5cm}
@@ -70,7 +70,7 @@ Now we want to solve the 1D diffusion equation using the finite difference form 
 \bigskip
 \noindent 3. \textbf{Mixing of Two Gases}\par
 \smallskip
-Now we want to write a program that simulates the mixing of two gases in 2D in a rectangular enclosure. First, we set up a 2D grid with dimensions 120 x 80, and populate the left third of the grid with species "A", the right third of the grid with species "B", and leave the middle third of the grid empty. We pick a random location on the grid, and have the gas particle move at a random position up/down/left/right; if the selected position is occupied, we reject the move and pick another particle. We repeat this for a large number of iterations. \par
+Now we want to write a program that simulates the mixing of two gases in 2D in a rectangular enclosure. First, we set up a 2D grid with dimensions 120 x 80, and populate the left third of the grid with species "A", the right third of the grid with species "B", and leave the middle third of the grid empty. We pick a random location on the grid, and if it is occupied, we have the gas particle move at a random position up/down/left/right; if the selected neighbouring position is occupied, we reject the move and pick another particle. We repeat this for a large number of iterations. \par
 In writing our program, there were three distinct attributes that allowed our algorithm to run in a timely manner. First, when picking a random location on the grid, we choose unoccupied sites rather than occupied sites. This is because there are twice as many occupied sites as unoccupied; choosing and checking whether each occupied site has an empty neighbour will take twice as long as choosing and checking whether an unoccupied site has an occupied neighour. So, we choose unoccupied sites; if it has an occupied neighbour, we move the gas particle to the unoccupied location. Second, we only generate one instead of two random integers, and use it both for choosing a random unoccupied site and choosing the direction of its neighbour. This is twice as fast as generating a random integer for choosing the unoccupied location, and then generating another random integer for choosing which direction the neighbour is. Last, we create a border of permanently occupied sites around the perimeter of the grid. This will always prevent a gas particle at the edge from moving outside the grid, but it allows us to sidestep checking the index of the gas particles, and having different instructions for particles at the edge of the grid. Without the if/else statements for edge particles, our algorithm can run significantly faster.\par
 We make visual plots at different times to show the diffusion of gas A and gas B:\par
 \begin{figure}[H]
@@ -103,7 +103,7 @@ We also want to plot the linear population densities at the same time intervals 
 \label{fig:maxdensplot}
 \end{figure}
 
-\noindent We can see that Figure \ref{fig:maxdensplot} shows an equal distribution of the linear population densities throughout the grid, unlike the last plot of Figure \ref{fig:dens}. Plotting the linear densities allows us to better determine how well mixed the gases are.\par
+\noindent We can see that Figure \ref{fig:maxdensplot} shows an equal distribution of the linear population densities throughout the grid, unlike the last plot of Figure \ref{fig:dens}. Plotting the linear densities allows us to better determine how well-mixed the gases are.\par
 
 Last, to increase our accuracy, we want to average the densities over 100 trials and replot the linear population densities. Figure \ref{fig:avgdens} shows this plot.\par
 
