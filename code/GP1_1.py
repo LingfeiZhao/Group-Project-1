@@ -54,7 +54,7 @@ for n in N:
 pylab.plot(N,Average_x,'co',label='$\left<x_n\\right>$')
 pylab.plot(N,Average_x2,'ro',label='$\left<x^2_n\\right>$')
 pylab.plot(N,Average_r2,'ko',label='$\left<r^2_n\\right>$')
-pylab.legend(loc=0)
+pylab.legend(loc=0,numpoints=1)
 pylab.xlabel('n')
 pylab.ylabel('Average Data over $10^4$ Samples')
 pylab.savefig('average.pdf')

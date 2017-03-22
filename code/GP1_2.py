@@ -35,6 +35,17 @@ for i in [100,1000,5000,10000,15000]: #i is the steps of the diffusion which is 
 	tfit.append(Dif.t)
 	sigmafit.append(popt)
 
+	xfit=[i/10.0 for i in range(-500,500)]
+	rhofit=[Normal_Distribution(x,popt) for x in xfit]
+	# plot the fitting snapshot
+	pylab.plot(Dif.x,Dif.rho,'o',label='t=%d'% Dif.t)
+	pylab.plot(xfit,rhofit,'-')
+	pylab.xlabel('x')
+	pylab.ylabel('$\\rho(x)$')
+	pylab.title('5 different time snapshots, the solid lines are the fitted curves')
+	pylab.legend(loc=0,numpoints=1)
+	pylab.savefig('snapshot.pdf')
+pylab.show()
 #theoretical sigma
 t=[2*i for i in range(100)]
 sigma=[pylab.sqrt(4*i) for i in t]
